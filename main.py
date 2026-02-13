@@ -2,7 +2,7 @@
 import sys
 import os
 import ply.lex as lex
-import lexer  # tu lexer.py (el archivo debe llamarse lexer.py)
+import lexer
 
 
 def main():
@@ -26,7 +26,6 @@ def main():
     lx.input(data)
 
     # Nombre de salida: mismo nombre + extensión .token
-    # (si el input era example.lava -> example.token)
     base, _ = os.path.splitext(input_path)
     output_path = base + ".token"
 
