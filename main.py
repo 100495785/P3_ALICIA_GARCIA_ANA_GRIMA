@@ -1,47 +1,59 @@
 # main.py
-import sys
+# Uso: python main.py <file>
+# Genera <mismo_nombre>.token con formato:
+# TIPO, VALOR, LINEA, COLUMNA-INICIO, COLUMNA-FIN
+
 import os
-import ply.lex as lex
-import lexer
+import sys
+
+import lexer as lava_lexer
 
 
-def main():
-    # Validación de argumentos
+def token_to_line(tok, lexdata: str) -> str:
+    # columna inicio: 0-based
+    col_start = lava_lexer.find_column(tok.lexer, tok.lexpos)
+
+    # columna fin: exclusiva (como en el ejemplo del PDF)
+    # Para que sea exacta, usamos la longitud del lexema que PLY ha guardado en tok.value (string)
+    # En palabras reservadas/operadores también es string.
+    lexeme = tok.value
+    # Por seguridad, si algún token tuviera value no-str (no debería aquí), lo convertimos:
+    if not isinstance(lexeme, str):
+        lexeme = str(lexeme)
+
+    col_end = col_start + len(lexeme)
+
+    return f"{tok.type}, {lexeme}, {tok.lineno}, {col_start}, {col_end}"
+
+
+def main() -> int:
     if len(sys.argv) != 2:
         print("Uso: python main.py <file>")
-        sys.exit(1)
+        return 1
 
-    input_path = sys.argv[1]
+    in_path = sys.argv[1]
+    if not os.path.isfile(in_path):
+        print(f"Error: no existe el fichero: {in_path}")
+        return 1
 
-    # Leer fichero de entrada
-    try:
-        with open(input_path, "r", encoding="utf-8") as f:
-            data = f.read()
-    except FileNotFoundError:
-        print(f"Error: no se encuentra el fichero '{input_path}'")
-        sys.exit(1)
+    with open(in_path, "r", encoding="utf-8") as f:
+        data = f.read()
 
-    # Construir lexer
-    lx = lex.lex(module=lexer)
-    lx.input(data)
+    # Normalizamos CRLF -> LF para consistencia en columnas/líneas
+    data = data.replace("\r\n", "\n")
 
-    # Nombre de salida: mismo nombre + extensión .token
-    base, _ = os.path.splitext(input_path)
-    output_path = base + ".token"
+    lexr = lava_lexer.make_lexer()
+    lexr.input(data)
 
-    # Tokenizar y escribir salida
-    with open(output_path, "w", encoding="utf-8") as out:
-        while True:
-            tok = lx.token()
-            if not tok:
-                break
+    base, _ext = os.path.splitext(in_path)
+    out_path = base + ".token"
 
-            line = tok.lineno
-            col_start = lexer.find_column(data, tok)
-            col_end = col_start + len(str(tok.value))
+    with open(out_path, "w", encoding="utf-8") as out:
+        for tok in lexr:
+            out.write(token_to_line(tok, data) + "\n")
 
-            out.write(f"{tok.type}, {tok.value}, {line}, {col_start}, {col_end}\n")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
