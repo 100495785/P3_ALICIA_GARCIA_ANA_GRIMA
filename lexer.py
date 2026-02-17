@@ -167,14 +167,18 @@ _dot_float = rf"(?:{_dec_int})\.(?:[0-9]+)"
 _sci_float = rf"(?:{_dec_int})(?:\.(?:[0-9]+))?[eE][\+\-]?(?:{_dec_int})"
 
 def t_FLOAT_VALUE(t):
-    rf"{_sci_float}|{_dot_float}"
     # Mantener lexema tal cual (string) para que columna-fin sea exacta
     return t
 
+# Definimos la expresión regular como atributo __doc__ (PLY la busca ahí)
+t_FLOAT_VALUE.__doc__ = rf"{_sci_float}|{_dot_float}"
+
 def t_INT_VALUE(t):
-    rf"{_bin_int}|{_hex_int}|{_oct_int}|{_dec_int}"
     # Mantener lexema tal cual
     return t
+
+# Definimos la expresión regular como atributo __doc__ (PLY la busca ahí)
+t_INT_VALUE.__doc__ = rf"{_bin_int}|{_hex_int}|{_oct_int}|{_dec_int}"
 
 # -------------------------
 # CHAR literal: 'x' o escapes simples tipo '\n', '\'', '\\', etc.

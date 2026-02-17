@@ -9,9 +9,9 @@ import sys
 import lexer as lava_lexer
 
 
-def token_to_line(tok, lexdata: str) -> str:
+def token_to_line(tok, lexdata: str, lexer) -> str:
     # columna inicio: 0-based
-    col_start = lava_lexer.find_column(tok.lexer, tok.lexpos)
+    col_start = lava_lexer.find_column(lexer, tok.lexpos)
 
     # columna fin: exclusiva (como en el ejemplo del PDF)
     # Para que sea exacta, usamos la longitud del lexema que PLY ha guardado en tok.value (string)
@@ -50,7 +50,7 @@ def main() -> int:
 
     with open(out_path, "w", encoding="utf-8") as out:
         for tok in lexr:
-            out.write(token_to_line(tok, data) + "\n")
+            out.write(token_to_line(tok, data, lexr) + "\n")
 
     return 0
 

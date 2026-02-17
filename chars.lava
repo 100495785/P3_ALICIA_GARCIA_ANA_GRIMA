@@ -1,0 +1,4 @@
+char a = 'x';
+char b = '\n';
+char c = '\\';
+char d = '\'';
