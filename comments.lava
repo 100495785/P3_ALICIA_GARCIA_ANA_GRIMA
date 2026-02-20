@@ -1,5 +1,0 @@
-// This is a line comment
-int x = 1; /* block comment start
-still in comment
-end of comment */ int y = 2;
-/* comment with * and / inside: */

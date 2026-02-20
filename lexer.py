@@ -26,6 +26,7 @@ _reserved = {
     "char": "CHAR",
     "else": "ELSE",
     "record": "RECORD",
+    "break": "BREAK",
 }
 
 
@@ -34,9 +35,9 @@ _reserved = {
 tokens = (
     # Identificadores y literales
     "ID",
-    "INT_LITERAL",
-    "FLOAT_LITERAL",
-    "CHAR_LITERAL",
+    "INT_VALUE",
+    "FLOAT_VALUE",
+    "CHAR_VALUE",
     # Operadores (comparación / booleanos / aritmética)
     "ASSIGN",   # =
     "EQ",       # ==
@@ -125,7 +126,7 @@ def t_comment_NEWLINE(t):
     r"\n+"
     t.lexer.lineno += len(t.value)
 
-def t_comment_CONTENT_(_):
+def t_comment_content(_):
     r"[^*\n]+|\*+[^*/\n]*"
 
 t_comment_ignore = ""
@@ -146,19 +147,20 @@ _int_value = rf'(?:{_int_bin}|{_int_hex}|{_int_oct}|{_int_dec})'
 
 # Reales
 _float_dot = rf'(?:{_int_dec})\.[0-9]+'
+# Se permite notación científica con 'e' o 'E' para mayor robustez, aunque el enunciado solo ejemplifica la 'e' minúscula
 _float_sci = rf'(?:{_float_dot}|{_int_dec})[eE][+\-]?{_int_dec}'
 _float_value = rf'(?:{_float_sci}|{_float_dot})'
 
 # Floats
 @TOKEN(_float_value)
-def t_FLOAT_LITERAL(t):
+def t_FLOAT_VALUE(t):
     t.value = float(t.value)
     return t
 
 # INT
 # La conversión se hace manualmente para garantizar el comportamiento correcto, ya que Python no interpreta automáticamente ciertas formas
 @TOKEN(_int_value)
-def t_INT_LITERAL(t):
+def t_INT_VALUE(t):
     s = t.value
 
     if s.startswith('0b'):
@@ -179,8 +181,8 @@ def t_INT_LITERAL(t):
 
 
 # CHAR
-# Se permite notación científica con 'e' o 'E' para mayor robustez, aunque el enunciado solo ejemplifica la 'e' minúscula
-def t_CHAR_LITERAL(t):
+# Literal CHAR entre comillas simples. Se permiten los escapes comunes \n, \t, \r, \', \\
+def t_CHAR_VALUE(t):
     r"\'([^\\\n]|(\\.))\'"
 
     raw = t.value[1:-1]  # sin comillas

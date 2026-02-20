@@ -17,17 +17,12 @@ def line_start_pos(text: str, lexpos: int) -> int:
     # índice del carácter posterior al último \n antes de lexpos
     return text.rfind('\n', 0, lexpos) + 1
 
-# Calcula columna inicio y fin del token
-def col_start_end(text: str, tok) -> tuple[int, int]:
-    start = tok.lexpos - line_start_pos(text, tok.lexpos)
-    end = start + len(str(tok.value) if tok.type in ('INT_LITERAL', 'FLOAT_LITERAL') else tok.lexeme)
-    return start, end
 
 # Devuelve el string (se imprime en el campo VALOR del token).
 # Para literales numéricos, el lexer ya convierte a int/float y aquí los pasamos a string
 # Para el resto (incluyendo CHAR), usamos el lexema original para que sea exacto
 def token_value_str(tok) -> str:
-    if tok.type in ('INT_LITERAL', 'FLOAT_LITERAL'):
+    if tok.type in ('INT_VALUE', 'FLOAT_VALUE'):
         return str(tok.value)
     return tok.lexeme
 
@@ -68,7 +63,7 @@ def main():
         col_start, col_end = find_column(data, tok)
         out_lines.append(f"{tok.type}, {token_value_str(tok)}, {tok.lineno}, {col_start}, {col_end}")
 
-    out_path = in_path.with_suffix(in_path.suffix + ".token")
+    out_path = in_path.with_suffix(".token")
     out_path.write_text("\n".join(out_lines) + ("\n" if out_lines else ""), encoding="utf-8")
     # print(f"Análisis léxico completado. Fichero generado: {out_path}")
 

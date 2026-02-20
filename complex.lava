@@ -1,9 +1,0 @@
-// Complex sample with errors and everything
-record R { int v; }
-int x = 0xFF + 0b10 + 42;
-/* multi
-line comment
-*/
-char ch = '\t';
-print(x, ch);
-@ // illegal char should produce error
