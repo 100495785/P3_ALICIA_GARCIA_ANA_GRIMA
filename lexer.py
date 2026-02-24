@@ -9,30 +9,33 @@ from ply.lex import TOKEN
 
 
 # ===== Palabras reservadas =====
+reserved = (
+    "TRUE",
+    "BOOLEAN",
+    "DO",
+    "FALSE",
+    "VOID",
+    "WHILE",
+    "INT",
+    "RETURN",
+    "PRINT",
+    "FLOAT",
+    "IF",
+    "NEW",
+    "CHAR",
+    "ELSE",
+    "RECORD",
+    "BREAK",
+)
 
-_reserved = {
-    "true": "TRUE",
-    "boolean": "BOOLEAN",
-    "do": "DO",
-    "false": "FALSE",
-    "void": "VOID",
-    "while": "WHILE",
-    "int": "INT",
-    "return": "RETURN",
-    "print": "PRINT",
-    "float": "FLOAT",
-    "if": "IF",
-    "new": "NEW",
-    "char": "CHAR",
-    "else": "ELSE",
-    "record": "RECORD",
-    "break": "BREAK",
-}
+reserved_map = {}
+for r_type in reserved:
+    reserved_map[r_type.lower()] = r_type
 
 
 # ===== Tokens =====
 
-tokens = (
+tokens = reserved + (
     # Identificadores y literales
     "ID",
     "INT_VALUE",
@@ -60,7 +63,7 @@ tokens = (
     "COMMA",    # ,
     "SEMICOLON",# ;
     "DOT",      # .
-) + tuple(_reserved.values())
+) 
 
 
 # ===== Reglas simples =====
@@ -94,11 +97,13 @@ t_SEMICOLON = r";"
 t_DOT = r"\."
 
 
+
 # ===== Ignorar espacios y tabs =====
 t_ignore = " \t"
 
 
-# ===== Comentarios (se ignoran) =====
+
+# ===== Ignorar comentarios =====
 # // ... fin de línea
 # /* ... */ multilínea 
 
@@ -158,7 +163,7 @@ def t_FLOAT_VALUE(t):
     return t
 
 # INT
-# La conversión se hace manualmente para garantizar el comportamiento correcto, ya que Python no interpreta automáticamente ciertas formas
+# La conversión se hace manualmente, ya que Python no interpreta automáticamente ciertas formas
 @TOKEN(_int_value)
 def t_INT_VALUE(t):
     s = t.value
@@ -208,11 +213,13 @@ def t_CHAR_VALUE(t):
 
     return t
 
-
 def t_ID(t):
     r"[a-zA-Z_][a-zA-Z0-9_]*"
-    t.type = _reserved.get(t.value, "ID")
+    t.type = reserved_map.get(t.value, "ID")
     return t
+
+
+# ===== Manejo de errores =====
 
 def t_error(t):
     print(f"Illegal character {t.value[0]!r} at line {t.lineno}")
