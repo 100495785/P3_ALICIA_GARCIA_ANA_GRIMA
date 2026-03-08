@@ -77,4 +77,11 @@
     "type": "error",
     "description": "Comentario multilínea sin cierre. El lexer entra en estado comment y consume hasta EOF."
   }
+  ,
+  {
+    "id": "test_14",
+    "file": "test_14_ok.lava",
+    "type": "ok",
+    "description": "Caso añadido: declaración simple para test_14_ok."
+  }
 ]

@@ -12,11 +12,6 @@ import lexer as lava_lexer
 def normalize_newlines(text: str) -> str:
     return text.replace('\r\n', '\n').replace('\r', '\n')
 
-# Devuelve la posición del 1er carácter de la línea donde cae lexpos
-def line_start_pos(text: str, lexpos: int) -> int:
-    # índice del carácter posterior al último \n antes de lexpos
-    return text.rfind('\n', 0, lexpos) + 1
-
 
 # Devuelve el string (se imprime en el campo VALOR del token).
 # Para literales numéricos, el lexer ya convierte a int/float y aquí los pasamos a string
@@ -26,10 +21,6 @@ def token_value_str(tok) -> str:
         return str(tok.value)
     return tok.lexeme
 
-def find_column(text: str, tok) -> tuple[int, int]:
-    start = tok.lexpos - line_start_pos(text, tok.lexpos)
-    end = start + len(tok.lexeme)
-    return start, end
 
 def main():
     if len(sys.argv) != 2:
@@ -56,12 +47,9 @@ def main():
         tok = lx.token()
         if not tok:
             break
-        # Guardar lexema original usando lexdata + posiciones
-        lexeme = lx.lexdata[tok.lexpos:lx.lexpos]
-        tok.lexeme = lexeme
 
-        col_start, col_end = find_column(data, tok)
-        out_lines.append(f"{tok.type}, {token_value_str(tok)}, {tok.lineno}, {col_start}, {col_end}")
+        out_lines.append(
+            f"{tok.type}, {token_value_str(tok)}, {tok.lineno}, {tok.col_start}, {tok.col_end}")
 
     out_path = in_path.with_suffix(".token")
     out_path.write_text("\n".join(out_lines) + ("\n" if out_lines else ""), encoding="utf-8")
