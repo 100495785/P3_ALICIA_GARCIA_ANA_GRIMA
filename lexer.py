@@ -121,6 +121,7 @@ states = (("comment", "exclusive"),)
 # Comentarios multi-línea (estado exclusivo para evitar expresión regular grande)
 def t_MLCOMMENT_START(t):
     r"/\*"
+    t.lexer.comment_start_line = t.lineno
     t.lexer.begin("comment")
 
 def t_comment_END(t):
@@ -138,6 +139,11 @@ t_comment_ignore = ""
 
 def t_comment_error(t):
     t.lexer.skip(1)
+
+def t_comment_eof(t):
+    start = getattr(t.lexer, "comment_start_line", t.lexer.lineno)
+    print(f"Unterminated comment starting at line {start}")
+    return None
 
 
 # ===== Literales =====
