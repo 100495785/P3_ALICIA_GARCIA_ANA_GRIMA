@@ -2,5 +2,17 @@ int suma(int x, int y) {
     return x + y;
 }
 
-int a;
-a = suma(2, 3);
+int a = 0;
+int b = 2;
+
+while (a < 3) {
+    a = a + 1;
+}
+
+if (a == 3) {
+    b = suma(a, b);
+} else {
+    b = 0;
+}
+
+print(b);

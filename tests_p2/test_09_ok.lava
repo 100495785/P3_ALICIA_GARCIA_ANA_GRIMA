@@ -1,3 +1,6 @@
-void mostrar(int x) {
-    print(x);
+int suma(int x, int y) {
+    return x + y;
 }
+
+int a;
+a = suma(2, 3);

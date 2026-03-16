@@ -1,7 +1,7 @@
-# Analizador sintáctico para una primera versión de la P2 de Lava utilizando PLY, que define:
-# - Una gramática simplificada pero alineada con el lenguaje del enunciado
+# Analizador sintáctico para la P2 de Lava utilizando PLY, que define:
+# - La gramática del lenguaje Lava
 # - Las reglas de precedencia y asociatividad de los operadores
-# - La estructura básica del programa, sentencias, bloques y funciones
+# - La estructura global del programa, sentencias, funciones, registros y expresiones
 # - El manejo básico de errores sintácticos
 
 import ply.yacc as yacc
@@ -46,14 +46,12 @@ def p_empty(p):
 
 # ===== Estructura global del programa =====
 # Un programa es una secuencia de elementos de nivel superior.
-# En esta versión simplificada se permiten:
+# Se permiten:
 # - sentencias vacías ';'
-# - declaraciones de variables
-# - asignaciones
-# - llamadas a función como sentencia
-# - print y return
+# - declaraciones y funciones
+# - sentencias no tipadas acabadas en ';'
 # - sentencias compuestas
-# - declaraciones de funciones
+# - declaraciones de registros acabadas en ';'
 
 def p_program(p):
     "program : top_list"
@@ -81,7 +79,13 @@ def p_top_item_empty_stmt(p):
 # - declaración con inicialización: int a = 3;
 # - función: int suma(int x, int y) { ... }
 def p_top_item_typed(p):
-    "top_item : type_spec_or_void ID top_typed_tail"
+    "top_item : type_spec ID top_typed_tail"
+    pass
+
+
+# Funciones cuyo tipo de retorno es void
+def p_top_item_void_function(p):
+    "top_item : VOID ID LPAREN parameter_list_opt RPAREN block"
     pass
 
 
@@ -94,6 +98,11 @@ def p_top_item_non_typed_stmt(p):
 
 def p_top_item_compound_stmt(p):
     "top_item : compound_statement"
+    pass
+
+
+def p_top_item_record_decl(p):
+    "top_item : record_declaration SEMICOLON"
     pass
 
 
@@ -116,6 +125,7 @@ def p_top_typed_tail_decl(p):
 # - declaración simple: int a;
 # - lista de variables: int a, b, c;
 # - inicialización: int a = 3;
+# - inicialización con expresiones complejas, incluyendo new
 def p_top_decl_tail_init(p):
     "top_decl_tail : ASSIGN expression"
     pass
@@ -164,20 +174,25 @@ def p_block_item_compound_stmt(p):
 
 
 # ===== Tipos =====
-# En esta versión simplificada se aceptan tipos básicos y void.
-# Más adelante se podrá ampliar con ID para tipos de record.
+# Un tipo puede ser:
+# - uno de los tipos básicos del lenguaje
+# - un identificador, para permitir tipos de registros previamente definidos
 
-def p_type_spec(p):
-    """type_spec : INT
-                 | FLOAT
-                 | CHAR
-                 | BOOLEAN"""
+def p_basic_type(p):
+    """basic_type : INT
+                  | FLOAT
+                  | CHAR
+                  | BOOLEAN"""
     pass
 
 
-def p_type_spec_or_void(p):
-    """type_spec_or_void : type_spec
-                         | VOID"""
+def p_type_spec_basic(p):
+    "type_spec : basic_type"
+    pass
+
+
+def p_type_spec_id(p):
+    "type_spec : ID"
     pass
 
 
@@ -197,10 +212,43 @@ def p_simple_statement(p):
 # en el nivel superior
 
 def p_non_typed_simple_statement(p):
-    """non_typed_simple_statement : assignment_statement
-                                  | call_statement
+    """non_typed_simple_statement : id_started_statement
                                   | print_statement
-                                  | return_statement"""
+                                  | return_statement
+                                  | break_statement"""
+    pass
+
+
+# ===== Sentencias que empiezan por ID =====
+# Se distinguen dos casos:
+# - llamada a función: f(...)
+# - asignación simple o a propiedades: a = ... / a.b.c = ...
+
+def p_id_started_statement(p):
+    "id_started_statement : ID id_statement_tail"
+    pass
+
+
+def p_id_statement_tail_call(p):
+    "id_statement_tail : LPAREN argument_list_opt RPAREN"
+    pass
+
+
+def p_id_statement_tail_assign(p):
+    "id_statement_tail : assignable_tail ASSIGN expression"
+    pass
+
+
+# Continúa una asignación después del identificador inicial:
+# - vacío        -> a = ...
+# - acceso campo -> a.b.c = ...
+def p_assignable_tail_empty(p):
+    "assignable_tail : empty"
+    pass
+
+
+def p_assignable_tail_dot(p):
+    "assignable_tail : DOT ID assignable_tail"
     pass
 
 
@@ -210,7 +258,8 @@ def p_non_typed_simple_statement(p):
 def p_compound_statement(p):
     """compound_statement : block
                           | if_statement
-                          | while_statement"""
+                          | while_statement
+                          | do_while_statement"""
     pass
 
 
@@ -219,6 +268,8 @@ def p_compound_statement(p):
 # - int a;
 # - int a, b, c;
 # - int a = 3;
+# - Point p;
+# - Point p = new Point(...);
 # No se permite multideclaración con asignación mezclada
 
 def p_declaration_statement(p):
@@ -249,23 +300,7 @@ def p_id_list_tail_recursive(p):
     pass
 
 
-# ===== Asignación =====
-# En esta versión simplificada la parte izquierda es solo un identificador
-
-def p_assignment_statement(p):
-    "assignment_statement : ID ASSIGN expression"
-    pass
-
-
-# ===== Llamada a función como sentencia =====
-# Se permite una llamada a función terminada en ';'
-
-def p_call_statement(p):
-    "call_statement : ID LPAREN argument_list_opt RPAREN"
-    pass
-
-
-# ===== Print / return =====
+# ===== Print / return / break =====
 
 def p_print_statement(p):
     "print_statement : PRINT LPAREN argument_list_opt RPAREN"
@@ -277,7 +312,12 @@ def p_return_statement(p):
     pass
 
 
-# ===== If / while =====
+def p_break_statement(p):
+    "break_statement : BREAK"
+    pass
+
+
+# ===== If / while / do-while =====
 
 def p_if_statement_if(p):
     "if_statement : IF LPAREN expression RPAREN block %prec IFX"
@@ -291,6 +331,23 @@ def p_if_statement_if_else(p):
 
 def p_while_statement(p):
     "while_statement : WHILE LPAREN expression RPAREN block"
+    pass
+
+
+# Se acepta do-while con ';' final, que es la forma habitual.
+# También se acepta sin ';' final para ser tolerante con el ejemplo del enunciado.
+def p_do_while_statement(p):
+    """do_while_statement : DO block WHILE LPAREN expression RPAREN
+                          | DO block WHILE LPAREN expression RPAREN SEMICOLON"""
+    pass
+
+
+# ===== Declaración de registros =====
+# Ejemplo:
+# record Vector(float x, float y);
+
+def p_record_declaration(p):
+    "record_declaration : RECORD ID LPAREN field_list_opt RPAREN"
     pass
 
 
@@ -322,8 +379,36 @@ def p_parameter(p):
     pass
 
 
+# ===== Campos de registros =====
+# Se usan en la definición de records
+
+def p_field_list_opt_list(p):
+    "field_list_opt : field_list"
+    pass
+
+
+def p_field_list_opt_empty(p):
+    "field_list_opt : empty"
+    pass
+
+
+def p_field_list_single(p):
+    "field_list : field"
+    pass
+
+
+def p_field_list_multiple(p):
+    "field_list : field_list COMMA field"
+    pass
+
+
+def p_field(p):
+    "field : type_spec ID"
+    pass
+
+
 # ===== Argumentos =====
-# Se reutilizan para llamadas a función y print(...)
+# Se reutilizan para llamadas a función, print(...) y new Tipo(...)
 
 def p_argument_list_opt_list(p):
     "argument_list_opt : argument_list"
@@ -346,10 +431,12 @@ def p_argument_list_multiple(p):
 
 
 # ===== Expresiones =====
-# En esta primera versión se incluyen:
+# Las expresiones incluyen:
 # - literales
 # - identificadores
 # - llamadas a función
+# - instanciación con new
+# - acceso a propiedades
 # - operadores aritméticos, booleanos y comparativos
 # - paréntesis
 
@@ -383,16 +470,36 @@ def p_expression_unary_minus(p):
     pass
 
 
-def p_expression_primary(p):
-    "expression : primary_expression"
+def p_expression_postfix(p):
+    "expression : postfix_expression"
+    pass
+
+
+# ===== Expresiones postfijas =====
+# Permiten:
+# - llamadas encadenadas con (...)
+# - acceso encadenado a propiedades con '.'
+
+def p_postfix_expression_primary(p):
+    "postfix_expression : primary_expression"
+    pass
+
+
+def p_postfix_expression_call(p):
+    "postfix_expression : postfix_expression LPAREN argument_list_opt RPAREN"
+    pass
+
+
+def p_postfix_expression_dot(p):
+    "postfix_expression : postfix_expression DOT ID"
     pass
 
 
 # ===== Expresiones primarias =====
 # Elementos base de una expresión:
-# - identificadores
-# - llamadas a función
 # - literales
+# - identificadores
+# - instanciación con new
 # - expresiones entre paréntesis
 
 def p_primary_expression_group(p):
@@ -414,8 +521,8 @@ def p_primary_expression_id(p):
     pass
 
 
-def p_primary_expression_call(p):
-    "primary_expression : ID LPAREN argument_list_opt RPAREN"
+def p_primary_expression_new(p):
+    "primary_expression : NEW ID LPAREN argument_list_opt RPAREN"
     pass
 
 
