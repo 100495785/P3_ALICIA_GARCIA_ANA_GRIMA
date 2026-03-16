@@ -20,6 +20,7 @@ start = "program"
 # Se define la precedencia de operadores para evitar ambigüedades:
 # - else por encima del if sin else para resolver el dangling else
 # - || por debajo de &&
+# - igualdad separada de comparaciones (estilo Java)
 # - comparaciones por debajo de suma/resta
 # - suma/resta por debajo de multiplicación/división
 # - operadores unarios con mayor precedencia que los binarios
@@ -29,7 +30,8 @@ precedence = (
     ("nonassoc", "ELSE"),
     ("left", "OR"),
     ("left", "AND"),
-    ("nonassoc", "EQ", "GT", "GE", "LT", "LE"),
+    ("nonassoc", "EQ"),
+    ("nonassoc", "GT", "GE", "LT", "LE"),
     ("left", "PLUS", "MINUS"),
     ("left", "TIMES", "DIVIDE"),
     ("right", "NOT", "UPLUS", "UMINUS"),
@@ -334,11 +336,8 @@ def p_while_statement(p):
     pass
 
 
-# Se acepta do-while con ';' final, que es la forma habitual.
-# También se acepta sin ';' final para ser tolerante con el ejemplo del enunciado.
 def p_do_while_statement(p):
-    """do_while_statement : DO block WHILE LPAREN expression RPAREN
-                          | DO block WHILE LPAREN expression RPAREN SEMICOLON"""
+    "do_while_statement : DO block WHILE LPAREN expression RPAREN"
     pass
 
 

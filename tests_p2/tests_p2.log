@@ -8,7 +8,6 @@ char c;
 boolean ok;
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 
 Exit code: 0
 
@@ -21,7 +20,6 @@ a = a + 1;
 b = b * 2;
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 
 Exit code: 0
 
@@ -33,7 +31,6 @@ boolean x, y;
 char letter;
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 
 Exit code: 0
 
@@ -45,7 +42,6 @@ boolean ok = 3 < 4 && 5 > 2 || false;
 float x = -(3 + 2) * 4.5;
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 
 Exit code: 0
 
@@ -59,7 +55,6 @@ if (a < 10) {
 }
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 
 Exit code: 0
 
@@ -75,7 +70,6 @@ if (a < 10) {
 }
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 
 Exit code: 0
 
@@ -89,7 +83,6 @@ while (a < 5) {
 }
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 
 Exit code: 0
 
@@ -101,7 +94,6 @@ void mostrar(int x) {
 }
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 
 Exit code: 0
 
@@ -116,7 +108,6 @@ int a;
 a = suma(2, 3);
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 
 Exit code: 0
 
@@ -143,7 +134,6 @@ if (a == 3) {
 print(b);
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 
 Exit code: 0
 
@@ -154,7 +144,6 @@ record Point(int x, int y);
 Point p;
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 
 Exit code: 0
 
@@ -165,7 +154,6 @@ record Point(int x, int y);
 Point p = new Point(1, 2);
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 
 Exit code: 0
 
@@ -178,7 +166,6 @@ int a = p.x;
 int b = p.y;
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 
 Exit code: 0
 
@@ -191,7 +178,6 @@ p.x = 7;
 p.y = p.x + 3;
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 
 Exit code: 0
 
@@ -208,7 +194,6 @@ while (a < 10) {
 }
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 
 Exit code: 0
 
@@ -222,7 +207,6 @@ do {
 } while (a < 5);
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 
 Exit code: 0
 
@@ -236,7 +220,6 @@ do {
 } while (a < 5)
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 
 Exit code: 0
 
@@ -249,7 +232,6 @@ record Line(Point a, Point b);
 Line l = new Line(new Point(0, 0), new Point(3, 4));
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 
 Exit code: 0
 
@@ -263,7 +245,6 @@ Line l = new Line(new Point(0, 0), new Point(3, 4));
 int v = l.a.x;
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 
 Exit code: 0
 
@@ -281,7 +262,6 @@ int z = p.x + p.y;
 print(z);
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 
 Exit code: 0
 
@@ -292,7 +272,6 @@ int a
 float b;
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 [ERROR] Token 'FLOAT' inesperado en la línea 2
 
 Exit code: 0
@@ -303,7 +282,6 @@ Contenido del test:
 float d, e = 0.5;
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 [ERROR] Token 'ASSIGN' inesperado en la línea 1
 
 Exit code: 0
@@ -315,7 +293,6 @@ int a;
 a = ;
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 [ERROR] Token 'SEMICOLON' inesperado en la línea 2
 
 Exit code: 0
@@ -329,7 +306,6 @@ if (a < 5)
     a = a + 1;
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 [ERROR] Token 'ID' inesperado en la línea 4
 
 Exit code: 0
@@ -340,7 +316,6 @@ Contenido del test:
 int a = (3 + 2;
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 [ERROR] Token 'SEMICOLON' inesperado en la línea 1
 
 Exit code: 0
@@ -353,7 +328,6 @@ int suma(int x, int y {
 }
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 [ERROR] Token 'LBRACE' inesperado en la línea 1
 [ERROR] Token 'RBRACE' inesperado en la línea 3
 
@@ -369,7 +343,6 @@ while a < 5 {
 }
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 [ERROR] Token 'ID' inesperado en la línea 3
 
 Exit code: 0
@@ -382,7 +355,6 @@ int b;
 a + b = 3;
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 [ERROR] Token 'PLUS' inesperado en la línea 3
 
 Exit code: 0
@@ -393,7 +365,6 @@ Contenido del test:
 record Point(int x, int y;
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 [ERROR] Token 'SEMICOLON' inesperado en la línea 1
 
 Exit code: 0
@@ -405,7 +376,6 @@ record Point(int x, int y);
 Point p = new Point(1, 2;
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 [ERROR] Token 'SEMICOLON' inesperado en la línea 2
 
 Exit code: 0
@@ -418,7 +388,6 @@ Point p = new Point(1, 2);
 int a = p.;
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 [ERROR] Token 'SEMICOLON' inesperado en la línea 3
 
 Exit code: 0
@@ -431,7 +400,6 @@ Point p = new Point(1, 2);
 p.x = ;
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 [ERROR] Token 'SEMICOLON' inesperado en la línea 3
 
 Exit code: 0
@@ -446,7 +414,6 @@ do {
 } while a < 5;
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 [ERROR] Token 'ID' inesperado en la línea 5
 
 Exit code: 0
@@ -459,7 +426,6 @@ while (true) {
 }
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 [ERROR] Token 'RBRACE' inesperado en la línea 3
 
 Exit code: 0
@@ -470,7 +436,6 @@ Contenido del test:
 record Point(int x, y);
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 [ERROR] Token 'RPAREN' inesperado en la línea 1
 
 Exit code: 0
@@ -481,7 +446,6 @@ Contenido del test:
 Point p = new (1, 2);
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 [ERROR] Token 'LPAREN' inesperado en la línea 1
 
 Exit code: 0
@@ -494,7 +458,6 @@ Point p = new Point(1, 2);
 p. = 3;
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 [ERROR] Token 'ASSIGN' inesperado en la línea 3
 
 Exit code: 0
@@ -506,7 +469,6 @@ record Point(int x, int y);
 Point a, b = new Point(1, 2);
 ============================================================
 Generating LALR tables
-WARNING: 1 shift/reduce conflict
 [ERROR] Token 'ASSIGN' inesperado en la línea 2
 
 Exit code: 0

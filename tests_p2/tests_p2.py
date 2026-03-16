@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
 Ejecuta todos los tests en tests_p2/*.lava secuencialmente.
-Después de cada test borra cualquier directorio __pycache__ (recursivo),
-y los archivos parser.out y parsetab.py en la raíz del proyecto.
+Después de cada test borra cualquier directorio __pycache__ (recursivo)
+y los archivos `parser.out` y `parsetab.py` en la raíz del proyecto.
+Registra la salida concatenada en `tests_p2/tests_p2.log`.
 """
 import sys
 import os
@@ -12,7 +13,7 @@ import subprocess
 
 
 def remove_artifacts(root):
-    # Remove parser.out and parsetab.py if present
+    # Elimina parser.out y parsetab.py si existen
     for name in ("parser.out", "parsetab.py"):
         path = os.path.join(root, name)
         if os.path.isfile(path):
@@ -21,7 +22,7 @@ def remove_artifacts(root):
             except Exception as e:
                 print(f"Warning: could not remove {path}: {e}")
 
-    # Remove any __pycache__ directories recursively
+    # Elimina recursivamente cualquier directorio __pycache__
     for dirpath, dirnames, _ in os.walk(root):
         if "__pycache__" in dirnames:
             full = os.path.join(dirpath, "__pycache__")
@@ -40,8 +41,8 @@ def run_tests(tests_dir="tests_p2"):
 
     root = os.getcwd()
 
-    # Master log for all tests
-    master_log = os.path.join(root, f"{tests_dir}.log")
+    # Archivo log dentro de la carpeta de tests
+    master_log = os.path.join(root, tests_dir, f"{tests_dir}.log")
     try:
         master_fh = open(master_log, "w", encoding="utf-8")
     except Exception as e:
@@ -55,10 +56,10 @@ def run_tests(tests_dir="tests_p2"):
         cmd = [sys.executable, "main.py", t]
         proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
 
-        # Append output to master log and include test file content
+        # Añade al log maestro e incluye el contenido del test
         header = f"\n{'=' * 60}\nEjecutando: {t}\n"
 
-        # Read test file content
+        # Lee el contenido del test para incluirlo en el log
         try:
             with open(t, "r", encoding="utf-8") as tf:
                 test_content = tf.read()
@@ -77,11 +78,11 @@ def run_tests(tests_dir="tests_p2"):
             except Exception as e:
                 print(f"Warning: could not write to master log {master_log}: {e}")
 
-        # Also print a short summary to the console
+        # Imprime en consola para feedback inmediato
         print(f"Salida añadida a: {master_log}")
         print(f"Exit code: {proc.returncode}\n")
 
-        # Cleanup before next test
+        # Elimina los archivos después de cada test
         remove_artifacts(root)
 
     if master_fh:
