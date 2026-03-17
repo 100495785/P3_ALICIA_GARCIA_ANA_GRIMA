@@ -50,11 +50,7 @@ def run_lexer_mode(in_path: Path, data: str):
 # Si el fichero es correcto, no muestra salida
 # Si hay errores, estos se informan desde p_error en parser.py
 def run_parser_mode(data: str):
-    lx = lava_lexer.build_lexer()
-    lx.lineno = 1
-
-    parser = lava_parser.build_parser()
-    parser.parse(data, lexer=lx)
+    lava_parser.parse(data)
 
 
 def main():

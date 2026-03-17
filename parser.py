@@ -75,13 +75,23 @@ def p_top_item_empty_stmt(p):
     pass
 
 
-# Elementos de nivel superior que empiezan por tipo + identificador.
+# Elementos de nivel superior que empiezan por tipo básico + identificador.
 # Permiten distinguir entre:
 # - declaración: int a;
 # - declaración con inicialización: int a = 3;
 # - función: int suma(int x, int y) { ... }
-def p_top_item_typed(p):
-    "top_item : type_spec ID top_typed_tail"
+def p_top_item_basic_typed(p):
+    "top_item : basic_type ID top_basic_typed_tail"
+    pass
+
+
+# Elementos de nivel superior que empiezan por tipo registro + identificador.
+# Permiten distinguir entre:
+# - función: Point f(Point p) { ... }
+# - declaración con asignación inmediata: Point p = new Point(...);
+# No se permite: Point p;
+def p_top_item_record_typed(p):
+    "top_item : ID ID top_record_typed_tail"
     pass
 
 
@@ -109,32 +119,41 @@ def p_top_item_record_decl(p):
 
 
 # ===== Continuación de elementos tipados en nivel superior =====
-# Tras haber leído 'tipo ID', se puede tener:
+# Tras haber leído 'tipo_basico ID', se puede tener:
 # - una función: (...) { ... }
 # - una declaración: ;   , ... ;   = ... ;
 
-def p_top_typed_tail_function(p):
-    "top_typed_tail : LPAREN parameter_list_opt RPAREN block"
+def p_top_basic_typed_tail_function(p):
+    "top_basic_typed_tail : LPAREN parameter_list_opt RPAREN block"
     pass
 
 
-def p_top_typed_tail_decl(p):
-    "top_typed_tail : top_decl_tail SEMICOLON"
+def p_top_basic_typed_tail_decl(p):
+    "top_basic_typed_tail : top_basic_decl_tail SEMICOLON"
     pass
 
 
-# Tras haber leído 'tipo ID', se permite:
-# - declaración simple: int a;
-# - lista de variables: int a, b, c;
-# - inicialización: int a = 3;
-# - inicialización con expresiones complejas, incluyendo new
-def p_top_decl_tail_init(p):
-    "top_decl_tail : ASSIGN expression"
+def p_top_basic_decl_tail_init(p):
+    "top_basic_decl_tail : ASSIGN expression"
     pass
 
 
-def p_top_decl_tail_list(p):
-    "top_decl_tail : id_list_tail"
+def p_top_basic_decl_tail_list(p):
+    "top_basic_decl_tail : id_list_tail"
+    pass
+
+
+# Tras haber leído 'tipo_registro ID', se puede tener:
+# - una función: (...) { ... }
+# - una declaración con asignación inmediata: = ... ;
+# No se permite declaración simple sin asignación
+def p_top_record_typed_tail_function(p):
+    "top_record_typed_tail : LPAREN parameter_list_opt RPAREN block"
+    pass
+
+
+def p_top_record_typed_tail_decl(p):
+    "top_record_typed_tail : ASSIGN expression SEMICOLON"
     pass
 
 
@@ -270,12 +289,19 @@ def p_compound_statement(p):
 # - int a;
 # - int a, b, c;
 # - int a = 3;
-# - Point p;
 # - Point p = new Point(...);
-# No se permite multideclaración con asignación mezclada
+# No se permite:
+# - Point p;
+# - Point a, b;
+# - multideclaración con asignación mezclada
 
-def p_declaration_statement(p):
-    "declaration_statement : type_spec ID declaration_suffix"
+def p_declaration_statement_basic(p):
+    "declaration_statement : basic_type ID declaration_suffix"
+    pass
+
+
+def p_declaration_statement_record(p):
+    "declaration_statement : ID ID ASSIGN expression"
     pass
 
 
@@ -309,8 +335,13 @@ def p_print_statement(p):
     pass
 
 
-def p_return_statement(p):
+def p_return_statement_expr(p):
     "return_statement : RETURN expression"
+    pass
+
+
+def p_return_statement_void(p):
+    "return_statement : RETURN"
     pass
 
 
@@ -537,4 +568,15 @@ def p_error(p):
 # ===== Construcción del parser =====
 
 def build_parser(**kwargs):
-    return yacc.yacc(**kwargs)
+    return yacc.yacc(module=__import__(__name__), start=start, **kwargs)
+
+
+# ===== Punto de entrada sintáctico =====
+# El lexer queda referenciado desde el propio parser para el análisis normal
+
+def parse(data: str, **kwargs):
+    lx = lava_lexer.build_lexer()
+    lx.lineno = 1
+
+    parser = build_parser(**kwargs)
+    return parser.parse(data, lexer=lx)
