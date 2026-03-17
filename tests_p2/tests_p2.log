@@ -1,0 +1,494 @@
+
+============================================================
+Ejecutando: tests_p2\test_01_ok.lava
+Contenido del test:
+int a;
+float b;
+char c;
+boolean ok;
+============================================================
+Generating LALR tables
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_02_ok.lava
+Contenido del test:
+int a = 3;
+float b = 2.5;
+a = a + 1;
+b = b * 2;
+============================================================
+Generating LALR tables
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_03_ok.lava
+Contenido del test:
+int a, b, c;
+boolean x, y;
+char letter;
+============================================================
+Generating LALR tables
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_04_ok.lava
+Contenido del test:
+int a = 2 + 3 * 4;
+boolean ok = 3 < 4 && 5 > 2 || false;
+float x = -(3 + 2) * 4.5;
+============================================================
+Generating LALR tables
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_05_ok.lava
+Contenido del test:
+int a = 3;
+
+if (a < 10) {
+    a = a + 1;
+}
+============================================================
+Generating LALR tables
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_06_ok.lava
+Contenido del test:
+int a = 3;
+
+if (a < 10) {
+    a = a + 1;
+} else {
+    a = a - 1;
+}
+============================================================
+Generating LALR tables
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_07_ok.lava
+Contenido del test:
+int a = 0;
+
+while (a < 5) {
+    a = a + 1;
+}
+============================================================
+Generating LALR tables
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_08_ok.lava
+Contenido del test:
+void mostrar(int x) {
+    print(x);
+}
+============================================================
+Generating LALR tables
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_09_ok.lava
+Contenido del test:
+int suma(int x, int y) {
+    return x + y;
+}
+
+int a;
+a = suma(2, 3);
+============================================================
+Generating LALR tables
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_10_ok.lava
+Contenido del test:
+int suma(int x, int y) {
+    return x + y;
+}
+
+int a = 0;
+int b = 2;
+
+while (a < 3) {
+    a = a + 1;
+}
+
+if (a == 3) {
+    b = suma(a, b);
+} else {
+    b = 0;
+}
+
+print(b);
+============================================================
+Generating LALR tables
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_11_ok.lava
+Contenido del test:
+record Point(int x, int y);
+
+============================================================
+Generating LALR tables
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_12_ok.lava
+Contenido del test:
+record Point(int x, int y);
+Point p = new Point(1, 2);
+============================================================
+Generating LALR tables
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_13_ok.lava
+Contenido del test:
+record Point(int x, int y);
+Point p = new Point(1, 2);
+int a = p.x;
+int b = p.y;
+============================================================
+Generating LALR tables
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_14_ok.lava
+Contenido del test:
+record Point(int x, int y);
+Point p = new Point(1, 2);
+p.x = 7;
+p.y = p.x + 3;
+============================================================
+Generating LALR tables
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_15_ok.lava
+Contenido del test:
+int a = 0;
+
+while (a < 10) {
+    if (a == 5) {
+        break;
+    }
+    a = a + 1;
+}
+============================================================
+Generating LALR tables
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_16_ok.lava
+Contenido del test:
+int a = 0;
+
+do {
+    a = a + 1;
+} while (a < 5);
+============================================================
+Generating LALR tables
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_17_ok.lava
+Contenido del test:
+int a = 0;
+
+do {
+    a = a + 1;
+} while (a < 5)
+============================================================
+Generating LALR tables
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_18_ok.lava
+Contenido del test:
+record Point(int x, int y);
+record Line(Point a, Point b);
+
+Line l = new Line(new Point(0, 0), new Point(3, 4));
+============================================================
+Generating LALR tables
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_19_ok.lava
+Contenido del test:
+record Point(int x, int y);
+record Line(Point a, Point b);
+
+Line l = new Line(new Point(0, 0), new Point(3, 4));
+int v = l.a.x;
+============================================================
+Generating LALR tables
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_20_ok.lava
+Contenido del test:
+record Point(int x, int y);
+
+Point makePoint(int a, int b) {
+    return new Point(a, b);
+}
+
+Point p = makePoint(4, 5);
+int z = p.x + p.y;
+print(z);
+============================================================
+Generating LALR tables
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_21_error.lava
+Contenido del test:
+int a
+float b;
+============================================================
+Generating LALR tables
+[ERROR] Token 'FLOAT' inesperado en la línea 2
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_22_error.lava
+Contenido del test:
+float d, e = 0.5;
+============================================================
+Generating LALR tables
+[ERROR] Token 'ASSIGN' inesperado en la línea 1
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_23_error.lava
+Contenido del test:
+int a;
+a = ;
+============================================================
+Generating LALR tables
+[ERROR] Token 'SEMICOLON' inesperado en la línea 2
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_24_error.lava
+Contenido del test:
+int a = 3;
+
+if (a < 5)
+    a = a + 1;
+============================================================
+Generating LALR tables
+[ERROR] Token 'ID' inesperado en la línea 4
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_25_error.lava
+Contenido del test:
+int a = (3 + 2;
+============================================================
+Generating LALR tables
+[ERROR] Token 'SEMICOLON' inesperado en la línea 1
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_26_error.lava
+Contenido del test:
+int suma(int x, int y {
+    return x + y;
+}
+============================================================
+Generating LALR tables
+[ERROR] Token 'LBRACE' inesperado en la línea 1
+[ERROR] Token 'RBRACE' inesperado en la línea 3
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_27_error.lava
+Contenido del test:
+int a = 0;
+
+while a < 5 {
+    a = a + 1;
+}
+============================================================
+Generating LALR tables
+[ERROR] Token 'ID' inesperado en la línea 3
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_28_error.lava
+Contenido del test:
+int a;
+int b;
+a + b = 3;
+============================================================
+Generating LALR tables
+[ERROR] Token 'PLUS' inesperado en la línea 3
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_29_error.lava
+Contenido del test:
+record Point(int x, int y;
+============================================================
+Generating LALR tables
+[ERROR] Token 'SEMICOLON' inesperado en la línea 1
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_30_error.lava
+Contenido del test:
+record Point(int x, int y);
+Point p = new Point(1, 2;
+============================================================
+Generating LALR tables
+[ERROR] Token 'SEMICOLON' inesperado en la línea 2
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_31_error.lava
+Contenido del test:
+record Point(int x, int y);
+Point p = new Point(1, 2);
+int a = p.;
+============================================================
+Generating LALR tables
+[ERROR] Token 'SEMICOLON' inesperado en la línea 3
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_32_error.lava
+Contenido del test:
+record Point(int x, int y);
+Point p = new Point(1, 2);
+p.x = ;
+============================================================
+Generating LALR tables
+[ERROR] Token 'SEMICOLON' inesperado en la línea 3
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_33_error.lava
+Contenido del test:
+int a = 0;
+
+do {
+    a = a + 1;
+} while a < 5;
+============================================================
+Generating LALR tables
+[ERROR] Token 'ID' inesperado en la línea 5
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_34_error.lava
+Contenido del test:
+while (true) {
+    break
+}
+============================================================
+Generating LALR tables
+[ERROR] Token 'RBRACE' inesperado en la línea 3
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_35_error.lava
+Contenido del test:
+record Point(int x, y);
+============================================================
+Generating LALR tables
+[ERROR] Token 'RPAREN' inesperado en la línea 1
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_36_error.lava
+Contenido del test:
+Point p = new (1, 2);
+============================================================
+Generating LALR tables
+[ERROR] Token 'LPAREN' inesperado en la línea 1
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_37_error.lava
+Contenido del test:
+record Point(int x, int y);
+Point p = new Point(1, 2);
+p. = 3;
+============================================================
+Generating LALR tables
+[ERROR] Token 'ASSIGN' inesperado en la línea 3
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_38_error.lava
+Contenido del test:
+record Point(int x, int y);
+Point a, b = new Point(1, 2);
+============================================================
+Generating LALR tables
+[ERROR] Token 'COMMA' inesperado en la línea 2
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_39_error.lava
+Contenido del test:
+int a = (3 + 5
+============================================================
+Generating LALR tables
+[ERROR] Fin de fichero inesperado
+
+Exit code: 0
+
+============================================================
+Ejecutando: tests_p2\test_40_error.lava
+Contenido del test:
+Point p;
+============================================================
+Generating LALR tables
+[ERROR] Token 'SEMICOLON' inesperado en la línea 1
+
+Exit code: 0
