@@ -313,7 +313,7 @@ def t_ID(t):
 # ===== Manejo de errores =====
 
 def t_error(t):
-    print(f"Illegal character {t.value[0]!r} at line {t.lineno}")
+    print(f"[ERROR] Token ilegal {t.value[0]!r} en la línea {t.lineno}")
     t.lexer.skip(1)
 
 def build_lexer(**kwargs):
