@@ -887,3 +887,55 @@ Generating LALR tables
 [ERROR] El tipo 'int' no tiene campos
 
 Exit code: 1
+
+============================================================
+Ejecutando: tests_p3\test_41_error.lava
+Contenido del test:
+int f(int x) {
+    return f(x);
+}
+============================================================
+Generating LALR tables
+[ERROR] La función 'f' no existe o aún no ha sido declarada
+
+Exit code: 1
+
+============================================================
+Ejecutando: tests_p3\test_42_error.lava
+Contenido del test:
+int factorial(int n) {
+    if (n == 0) {
+        return 1;
+    }
+    return n * factorial(n - 1);
+}
+============================================================
+Generating LALR tables
+[ERROR] La función 'factorial' no existe o aún no ha sido declarada
+
+Exit code: 1
+
+============================================================
+Ejecutando: tests_p3\test_43_ok.lava
+Contenido del test:
+int doble(int x) {
+    return x + x;
+}
+
+int a = doble(3);
+============================================================
+Generating LALR tables
+
+--- Contenido de: tests_p3\test_43_ok.functions ---
+doble:[x:int],int
+
+--- Contenido de: tests_p3\test_43_ok.quartets ---
+
+
+--- Contenido de: tests_p3\test_43_ok.records ---
+
+
+--- Contenido de: tests_p3\test_43_ok.symbols ---
+a:int
+
+Exit code: 0
