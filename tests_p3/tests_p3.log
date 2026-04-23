@@ -109,16 +109,19 @@ Generating LALR tables
 
 --- Contenido de: tests_p3\test_04_ok.quartets ---
 ASSIGN,'A',_,c
-ADD,1,c,@T1
-ASSIGN,@T1,_,i
-MUL,c,8,@T2
-ADD,7.5,@T2,@T3
-ASSIGN,@T3,_,f
-UMINUS,5,_,@T4
-UPLUS,3,_,@T5
-MUL,@T5,2,@T6
-ADD,@T4,@T6,@T7
-ASSIGN,@T7,_,n
+CHAR_TO_INT,c,_,@T1
+ADD,1,@T1,@T2
+ASSIGN,@T2,_,i
+CHAR_TO_INT,c,_,@T3
+MUL,@T3,8,@T4
+INT_TO_FLOAT,@T4,_,@T5
+ADD,7.5,@T5,@T6
+ASSIGN,@T6,_,f
+UMINUS,5,_,@T7
+UPLUS,3,_,@T8
+MUL,@T8,2,@T9
+ADD,@T7,@T9,@T10
+ASSIGN,@T10,_,n
 
 --- Contenido de: tests_p3\test_04_ok.records ---
 
@@ -514,8 +517,9 @@ ASSIGN,2,_,a
 ASSIGN,3.5,_,b
 PRINT,a,_,_
 PRINT,b,_,_
-ADD,a,b,@T1
-PRINT,@T1,_,_
+INT_TO_FLOAT,a,_,@T1
+ADD,@T1,b,@T2
+PRINT,@T2,_,_
 
 --- Contenido de: tests_p3\test_17_ok.records ---
 
@@ -574,6 +578,10 @@ Generating LALR tables
 --- Contenido de: tests_p3\test_19_ok.quartets ---
 ASSIGN,7,_,a
 ASSIGN,0.0,_,b
+INT_TO_FLOAT,a,_,@T1
+ASSIGN,@T1,_,b
+ADD,b,0.5,@T2
+ASSIGN,@T2,_,b
 
 --- Contenido de: tests_p3\test_19_ok.records ---
 
@@ -610,9 +618,10 @@ LT,counter,5,@T1
 JUMPF,@T1,@L2,_
 ADD,counter,1,@T2
 ASSIGN,@T2,_,counter
-ASSIGN,counter,_,result
-UMINUS,result,_,@T3
+INT_TO_FLOAT,counter,_,@T3
 ASSIGN,@T3,_,result
+UMINUS,result,_,@T4
+ASSIGN,@T4,_,result
 PRINT,result,_,_
 JUMP,@L1,_,_
 LABEL,@L2,_,_

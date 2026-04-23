@@ -715,6 +715,7 @@ class Analyzer:
                 self._analyze_vardecl(item, self.global_scope, is_global=True)
             elif isinstance(item, AssignStmt):
                 self._analyze_assign(item, self.global_scope)
+                self._emit_assign_if_supported(item, self.global_scope)
             elif isinstance(item, ExprStmt):
                 self._infer_expr(item.expr, self.global_scope)
             elif isinstance(item, PrintStmt):
@@ -891,7 +892,7 @@ class Analyzer:
                     raise SemanticError(f"[ERROR] No se puede asignar '{expr_type}' a '{decl.type_name}'")
                 value = self._convert_value(expr_value, expr_type, decl.type_name)
                 if is_global:
-                    self._emit_decl_init(name, decl.init, scope)
+                    self._emit_decl_init(name, decl.type_name, decl.init, scope)
             else:
                 if is_global:
                     self._emit_default_assign(name, decl.type_name)
@@ -1131,15 +1132,50 @@ class Analyzer:
             ref = self._expr_ref(Literal(self._default_value(type_name), type_name), self.global_scope)
             self.quartets.append(f'ASSIGN,{ref},_,{name}')
 
-    def _emit_decl_init(self, name: str, expr, scope: Scope):
-        if self._emit_expr_if_supported(expr, scope):
-            self.quartets.append(f'ASSIGN,{self._expr_ref(expr, scope)},_,{name}')
+    def _emit_decl_init(self, name: str, target_type: str, expr, scope: Scope):
+        source_ref = self._emit_value_for_target_type(expr, scope, target_type)
+        if source_ref is not None:
+            self.quartets.append(f'ASSIGN,{source_ref},_,{name}')
 
     def _emit_assign_if_supported(self, stmt: AssignStmt, scope: Scope):
         if not isinstance(stmt.target, VarRef):
             return
-        if self._emit_expr_if_supported(stmt.expr, scope):
-            self.quartets.append(f'ASSIGN,{self._expr_ref(stmt.expr, scope)},_,{stmt.target.name}')
+        target_sym = scope.resolve(stmt.target.name)
+        if target_sym is None:
+            return
+        source_ref = self._emit_value_for_target_type(stmt.expr, scope, target_sym['type'])
+        if source_ref is not None:
+            self.quartets.append(f'ASSIGN,{source_ref},_,{stmt.target.name}')
+
+    def _emit_cast_ref(self, source_ref: str, src_type: str, dst_type: str) -> str:
+        if src_type == dst_type:
+            return source_ref
+
+        if src_type == 'char' and dst_type == 'int':
+            temp = self._new_temp()
+            self.quartets.append(f'CHAR_TO_INT,{source_ref},_,{temp}')
+            return temp
+
+        if src_type == 'int' and dst_type == 'float':
+            temp = self._new_temp()
+            self.quartets.append(f'INT_TO_FLOAT,{source_ref},_,{temp}')
+            return temp
+
+        if src_type == 'char' and dst_type == 'float':
+            temp1 = self._new_temp()
+            self.quartets.append(f'CHAR_TO_INT,{source_ref},_,{temp1}')
+            temp2 = self._new_temp()
+            self.quartets.append(f'INT_TO_FLOAT,{temp1},_,{temp2}')
+            return temp2
+
+        return source_ref
+
+    def _emit_value_for_target_type(self, expr, scope: Scope, target_type: str):
+        expr_type, _ = self._infer_expr(expr, scope)
+        if not self._emit_expr_if_supported(expr, scope):
+            return None
+        source_ref = self._expr_ref(expr, scope)
+        return self._emit_cast_ref(source_ref, expr_type, target_type)
 
     def _emit_expr_if_supported(self, expr, scope: Scope) -> bool:
         if isinstance(expr, (Literal, VarRef)):
@@ -1151,16 +1187,53 @@ class Analyzer:
         if isinstance(expr, CallExpr):
             return False
         if isinstance(expr, UnaryExpr):
+            expr_type, _ = self._infer_expr(expr, scope)
+            inner_type, _ = self._infer_expr(expr.expr, scope)
             if not self._emit_expr_if_supported(expr.expr, scope):
                 return False
+
+            inner_ref = self._expr_ref(expr.expr, scope)
+            if expr.op in {'+', '-'} and inner_type != expr_type:
+                inner_ref = self._emit_cast_ref(inner_ref, inner_type, expr_type)
+
             temp = self._new_temp()
             op_map = {'!': 'NOT', '+': 'UPLUS', '-': 'UMINUS'}
-            self.quartets.append(f"{op_map[expr.op]},{self._expr_ref(expr.expr, scope)},_,{temp}")
+            self.quartets.append(f"{op_map[expr.op]},{inner_ref},_,{temp}")
             expr._ref = temp
             return True
+
         if isinstance(expr, BinaryExpr):
+            left_type, _ = self._infer_expr(expr.left, scope)
+            right_type, _ = self._infer_expr(expr.right, scope)
+            result_type, _ = self._infer_expr(expr, scope)
+
             if not (self._emit_expr_if_supported(expr.left, scope) and self._emit_expr_if_supported(expr.right, scope)):
                 return False
+
+            left_ref = self._expr_ref(expr.left, scope)
+            right_ref = self._expr_ref(expr.right, scope)
+            op = expr.op
+
+            if op in {'+', '-', '*', '/'}:
+                left_ref = self._emit_cast_ref(left_ref, left_type, result_type)
+                right_ref = self._emit_cast_ref(right_ref, right_type, result_type)
+
+            elif op in {'>', '>=', '<', '<='}:
+                common_type = self._numeric_result_type(left_type, right_type)
+                left_ref = self._emit_cast_ref(left_ref, left_type, common_type)
+                right_ref = self._emit_cast_ref(right_ref, right_type, common_type)
+
+            elif op == '==':
+                if left_type != right_type:
+                    if left_type in NUMERIC_TYPES and right_type in NUMERIC_TYPES:
+                        common_type = self._numeric_result_type(left_type, right_type)
+                        left_ref = self._emit_cast_ref(left_ref, left_type, common_type)
+                        right_ref = self._emit_cast_ref(right_ref, right_type, common_type)
+                    elif self._can_assign(left_type, right_type) and not self._can_assign(right_type, left_type):
+                        left_ref = self._emit_cast_ref(left_ref, left_type, right_type)
+                    elif self._can_assign(right_type, left_type) and not self._can_assign(left_type, right_type):
+                        right_ref = self._emit_cast_ref(right_ref, right_type, left_type)
+
             temp = self._new_temp()
             op_map = {
                 '+': 'ADD', '-': 'SUB', '*': 'MUL', '/': 'DIV',
@@ -1168,10 +1241,11 @@ class Analyzer:
                 '==': 'EQ', '&&': 'AND', '||': 'OR',
             }
             self.quartets.append(
-                f"{op_map[expr.op]},{self._expr_ref(expr.left, scope)},{self._expr_ref(expr.right, scope)},{temp}"
+                f"{op_map[op]},{left_ref},{right_ref},{temp}"
             )
             expr._ref = temp
             return True
+
         return False
 
     # ===== Salida =====
